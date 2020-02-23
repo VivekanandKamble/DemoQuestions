@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity
                                 QuestionList.add(questionModel);
                             }
 
-                            CategoryModel categoryModel =new CategoryModel(str_category_id[i],str_category_name[i]);
+                            CategoryModel categoryModel =new CategoryModel(str_category_id[i],str_category_name[i],QuestionList);
                             CategoryList.add(categoryModel);
                         }
 

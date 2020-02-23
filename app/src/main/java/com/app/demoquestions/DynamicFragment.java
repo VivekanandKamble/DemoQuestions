@@ -39,6 +39,10 @@ public class DynamicFragment extends Fragment
             questionModels.addAll(questionaries);
             multiViewTypeAdapter.notifyDataSetChanged();
         }
+        else
+        {
+            System.out.println("Hello");
+        }
 
     }
 
@@ -47,6 +51,16 @@ public class DynamicFragment extends Fragment
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
     {
         view = inflater.inflate(R.layout.dynamic_fragment,container,false);
+
+
+        return view;
+
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         recyclerView_QuestionFragment = view.findViewById(R.id.recyclerView_QuestionFragment);
 
         multiViewTypeAdapter = new MultiViewTypeAdapter(getContext(),questionModels);
@@ -54,7 +68,5 @@ public class DynamicFragment extends Fragment
         recyclerView_QuestionFragment.setLayoutManager(linearLayoutManager);
         recyclerView_QuestionFragment.setItemAnimator(new DefaultItemAnimator());
         recyclerView_QuestionFragment.setAdapter(multiViewTypeAdapter);
-
-        return view;
     }
 }

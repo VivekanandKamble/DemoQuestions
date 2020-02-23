@@ -118,17 +118,62 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.View
     {
         View view;
 
-        if (questionModels.get(i).getStr_que_type().matches("Check Box"))
+        if (i==0)
         {
             view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_check, viewGroup, false);
             return new CheckTypeViewHolder(view);
         }
-//        else if (questionModels.get(i).getStr_que_type().matches("Check Box"))
+        else if (i==1)
+        {
+            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_radio, viewGroup, false);
+            return new RadioTypeViewHolder(view);
+        }
+        else if (i==2)
+        {
+            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_rating, viewGroup, false);
+            return new RatingTypeViewHolder(view);
+        }
+        else if (i==3)
+        {
+            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_long_textview, viewGroup, false);
+            return new LongTextTypeViewHolder(view);
+        }
+        else if (i==4)
+        {
+            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_image, viewGroup, false);
+            return new ImageTypeViewHolder(view);
+        }
 
 
         return null;
     }
 
+    @Override
+    public int getItemViewType(int position)
+    {
+        if (questionModels.get(position).getStr_que_type().matches("Check Box"))
+        {
+            return 0;
+        }
+        else if (questionModels.get(position).getStr_que_type().matches("Radio Button"))
+        {
+            return 1;
+        }
+        else if (questionModels.get(position).getStr_que_type().matches("Ratings"))
+        {
+            return 2;
+        }
+        else if (questionModels.get(position).getStr_que_type().matches("TextArea"))
+        {
+            return 3;
+        }
+        else if (questionModels.get(position).getStr_que_type().matches("Image"))
+        {
+            return 4;
+        }
+
+        return super.getItemViewType(position);
+    }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int position)
@@ -137,7 +182,7 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         if (questionModel!=null)
         {
-            if (questionModels.get(position).getStr_que_type().matches("Check Box"))
+            if (viewHolder instanceof CheckTypeViewHolder)
             {
                 ((CheckTypeViewHolder) viewHolder).textView_checkBoxQuestions.setText("Q : "+questionModels.get(position).str_gue_title);
 
@@ -160,7 +205,7 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.View
                     ((CheckTypeViewHolder) viewHolder).linearLayout_CheckBox.addView(checkBox);
                 }
             }
-            else if (questionModels.get(position).getStr_que_type().matches("Radio Button"))
+            else if (viewHolder instanceof RadioTypeViewHolder)
             {
                 ((RadioTypeViewHolder) viewHolder).textView_radioQuestions.setText("Q : "+questionModels.get(position).str_gue_title);
                 RadioGroup radioGroup = new RadioGroup(mContext);
@@ -181,7 +226,7 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.View
                 }
                 ((RadioTypeViewHolder) viewHolder).linearLayout_RadioButton.addView(radioGroup);
             }
-            else if (questionModels.get(position).getStr_que_type().matches("Ratings"))
+            else if (viewHolder instanceof RatingTypeViewHolder)
             {
                 ((RatingTypeViewHolder) viewHolder).textView_ratingBarQuestions.setText("Q : "+questionModels.get(position).str_gue_title);
                 final int count = questionModels.get(position).optionsModels.size();
@@ -198,12 +243,12 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.View
                     }
                 });
             }
-            else if (questionModels.get(position).getStr_que_type().matches("TextArea"))
+            else if (viewHolder instanceof LongTextTypeViewHolder)
             {
                 ((LongTextTypeViewHolder) viewHolder).textView_long_textViewQuestions.setText("Q : "+questionModels.get(position).str_gue_title);
                 String answer = ((LongTextTypeViewHolder) viewHolder).editText_long_textViewAnswer.getText().toString();
             }
-            else if (questionModels.get(position).getStr_que_type().matches("Image"))
+            else if (viewHolder instanceof ImageTypeViewHolder)
             {
                 ((ImageTypeViewHolder) viewHolder).textView_imageQuestions.setText("Q : "+questionModels.get(position).str_gue_title);
                 ((ImageTypeViewHolder) viewHolder).imageView_ImageAnswer.setOnClickListener(new View.OnClickListener() {
