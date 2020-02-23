@@ -19,7 +19,7 @@ public class DynamicFragment extends Fragment
     View view;
     RecyclerView recyclerView_QuestionFragment;
     MultiViewTypeAdapter multiViewTypeAdapter;
-    ArrayList<QuestionModel> questionModels;
+    ArrayList<QuestionModel> questionModels = new ArrayList<QuestionModel>();
 
     public static Fragment newInstance()
     {

@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity
 
                         JSONArray jsonArrayCategoryList = new JSONArray(jsonObjectData.getString("category_list"));
 
-                        System.out.println("json Array Category List Length :- "+jsonArrayCategoryList.length() +" and Array :- "+ jsonArrayCategoryList.toString());
+                        System.out.println("JSON Array Category List Length :- "+jsonArrayCategoryList.length() +" and Array :- "+ jsonArrayCategoryList.toString());
 
                         CategoryList = new ArrayList<CategoryModel>();
                         str_category_id = new String[jsonArrayCategoryList.length()];
@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity
                                 System.out.println("Question ID : " + str_que_id[j]);
                                 System.out.println("Question Title : " + str_que_title[j]);
                                 System.out.println("Question Type : " + str_que_type[j]);
-                                System.out.println("Question Category ID : " + str_que_category_id[j]);
+                                System.out.println("Question Cate ID : " + str_que_category_id[j]);
 
                                 JSONArray jsonArrayQuestionOptions = new JSONArray(jsonObjectQuestionList.getString("options"));
                                 OptionsList = new ArrayList<OptionsModel>();
