@@ -23,7 +23,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter
             {
                 fragment = DynamicFragment.newInstance();
             }
-        return null;
+        return fragment;
     }
 
     @Override
