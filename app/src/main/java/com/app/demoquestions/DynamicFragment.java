@@ -14,33 +14,27 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-public class DynamicFragment extends Fragment
-{
+public class DynamicFragment extends Fragment {
     View view;
     RecyclerView recyclerView_QuestionFragment;
     MultiViewTypeAdapter multiViewTypeAdapter;
     ArrayList<QuestionModel> questionModels = new ArrayList<QuestionModel>();
 
-    public static Fragment newInstance()
-    {
+    public static Fragment newInstance() {
         DynamicFragment dynamicFragment = new DynamicFragment();
         return dynamicFragment;
     }
 
-    public void setQuestionaries(ArrayList<QuestionModel> questionaries)
-    {
-        if (questionaries!=null && !questionaries.isEmpty())
-        {
-            if (questionModels!=null && !questionModels.isEmpty())
-            {
+    public void setQuestionaries(ArrayList<QuestionModel> questionaries) {
+        if (questionaries != null && !questionaries.isEmpty()) {
+            if (questionModels != null && !questionModels.isEmpty()) {
                 questionModels.clear();
             }
 
             questionModels.addAll(questionaries);
-            multiViewTypeAdapter.notifyDataSetChanged();
-        }
-        else
-        {
+            multiViewTypeAdapter = new MultiViewTypeAdapter(getContext(), questionModels);
+            recyclerView_QuestionFragment.setAdapter(multiViewTypeAdapter);
+        } else {
             System.out.println("Hello");
         }
 
@@ -48,11 +42,8 @@ public class DynamicFragment extends Fragment
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
-    {
-        view = inflater.inflate(R.layout.dynamic_fragment,container,false);
-
-
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.dynamic_fragment, container, false);
         return view;
 
     }
@@ -63,10 +54,11 @@ public class DynamicFragment extends Fragment
 
         recyclerView_QuestionFragment = view.findViewById(R.id.recyclerView_QuestionFragment);
 
-        multiViewTypeAdapter = new MultiViewTypeAdapter(getContext(),questionModels);
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), OrientationHelper.VERTICAL, false);
         recyclerView_QuestionFragment.setLayoutManager(linearLayoutManager);
         recyclerView_QuestionFragment.setItemAnimator(new DefaultItemAnimator());
-        recyclerView_QuestionFragment.setAdapter(multiViewTypeAdapter);
+
+
     }
 }
