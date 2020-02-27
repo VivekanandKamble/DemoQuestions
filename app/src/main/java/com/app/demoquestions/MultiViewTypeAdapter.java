@@ -1,7 +1,10 @@
 package com.app.demoquestions;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.AppCompatRatingBar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,16 +17,23 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RatingBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {
     Context mContext;
     private ArrayList<QuestionModel> questionModels;
+    JSONObject jsonObjectQASendData;
+    HashMap<String,JSONObject> stringJSONObjectHashMap = new HashMap<String, JSONObject>();
 
     public MultiViewTypeAdapter(Context mContext, ArrayList<QuestionModel> questionModels)
     {
@@ -41,7 +51,6 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.View
             super(itemView);
             textView_textViewQuestions=itemView.findViewById(R.id.textView_textViewQuestions);
             editText_textViewAnswer = itemView.findViewById(R.id.editText_textViewAnswer);
-
         }
     }
 
@@ -74,7 +83,7 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public static class RatingTypeViewHolder extends RecyclerView.ViewHolder
     {
-        RatingBar ratingBar_Answer;
+        AppCompatRatingBar ratingBar_Answer;
         TextView textView_ratingBarQuestions;
 
         public RatingTypeViewHolder(@NonNull View itemView) {
@@ -111,6 +120,19 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
+    public static class DropdownTypeViewHolder extends RecyclerView.ViewHolder
+    {
+        TextView textView_dropdownQuestions;
+        Spinner spinner_Answer;
+
+        public DropdownTypeViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            this.textView_dropdownQuestions=itemView.findViewById(R.id.textView_dropdownQuestions);
+            this.spinner_Answer = itemView.findViewById(R.id.spinner_Answer);
+        }
+    }
+
 
     @NonNull
     @Override
@@ -143,6 +165,16 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.View
             view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_image, viewGroup, false);
             return new ImageTypeViewHolder(view);
         }
+        else if (i==5)
+        {
+            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_textview, viewGroup, false);
+            return new TextTypeViewHolder(view);
+        }
+        else if (i==6)
+        {
+            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_dropdown, viewGroup, false);
+            return new DropdownTypeViewHolder(view);
+        }
 
 
         return null;
@@ -171,6 +203,14 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.View
         {
             return 4;
         }
+        else if (questionModels.get(position).getStr_que_type().matches("Textbox"))
+        {
+            return 5;
+        }
+        else if (questionModels.get(position).getStr_que_type().matches("Dropdown"))
+        {
+            return 6;
+        }
 
         return super.getItemViewType(position);
     }
@@ -184,7 +224,7 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.View
         {
             if (viewHolder instanceof CheckTypeViewHolder)
             {
-                ((CheckTypeViewHolder) viewHolder).textView_checkBoxQuestions.setText("Q : "+questionModels.get(position).str_gue_title);
+                ((CheckTypeViewHolder) viewHolder).textView_checkBoxQuestions.setText(questionModels.get(position).str_gue_title);
 
                 int count = questionModels.get(position).optionsModels.size();
 
@@ -195,19 +235,52 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.View
                     final CheckBox checkBox = new CheckBox(mContext);
                     checkBox.setId(Integer.parseInt(questionModels.get(position).optionsModels.get(k).str_opt_id));
                     checkBox.setText(questionModels.get(position).optionsModels.get(k).str_opt_name);
+                    final int finalK = k;
                     checkBox.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(View v) {
-                            Toast.makeText(mContext, "ID is :- "+checkBox.getId(), Toast.LENGTH_SHORT).show();
+                        public void onClick(View v)
+                        {
+                            if (checkBox.isChecked())
+                            {
+
+                                Toast.makeText(mContext, "ID is :- "+checkBox.getId(), Toast.LENGTH_SHORT).show();
+                                try {
+
+                                    jsonObjectQASendData = new JSONObject();
+                                    jsonObjectQASendData.put("question_id",questionModels.get(position).str_que_id);
+                                    jsonObjectQASendData.put("question_answer",checkBox.getId());
+                                    jsonObjectQASendData.put("question_type",questionModels.get(position).str_que_type);
+                                    jsonObjectQASendData.put("question_feedback_id",questionModels.get(position).str_que_fk_id);
+                                    stringJSONObjectHashMap.put("\""+questionModels.get(position).str_que_id+"_"+checkBox.getId()+"\"",jsonObjectQASendData);
+
+                                    Intent intent = new Intent("custom_message");
+                                    intent.putExtra("question_answer", String.valueOf(stringJSONObjectHashMap));
+                                    LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            else
+                            {
+                                stringJSONObjectHashMap.remove("\""+questionModels.get(position).str_que_id+"_"+checkBox.getId()+"\"");
+                                Intent intent = new Intent("custom_message");
+                                intent.putExtra("question_answer", String.valueOf(stringJSONObjectHashMap));
+                                LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+                            }
+
+
                         }
                     });
 
                     ((CheckTypeViewHolder) viewHolder).linearLayout_CheckBox.addView(checkBox);
                 }
+
             }
             else if (viewHolder instanceof RadioTypeViewHolder)
             {
-                ((RadioTypeViewHolder) viewHolder).textView_radioQuestions.setText("Q : "+questionModels.get(position).str_gue_title);
+
+                ((RadioTypeViewHolder) viewHolder).textView_radioQuestions.setText(questionModels.get(position).str_gue_title);
                 RadioGroup radioGroup = new RadioGroup(mContext);
                 radioGroup.setOrientation(RadioGroup.VERTICAL);
                 int count = questionModels.get(position).optionsModels.size();
@@ -216,41 +289,79 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.View
                     final RadioButton radioButton = new RadioButton(mContext);
                     radioButton.setId(Integer.parseInt(questionModels.get(position).optionsModels.get(j).str_opt_id));
                     radioButton.setText(questionModels.get(position).optionsModels.get(j).str_opt_name);
-                    radioButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            Toast.makeText(mContext, "ID is :- "+radioButton.getId(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
                     radioGroup.addView(radioButton);
                 }
                 ((RadioTypeViewHolder) viewHolder).linearLayout_RadioButton.addView(radioGroup);
+                radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(RadioGroup group, int checkedId) {
+                        Toast.makeText(mContext, "ID is :- "+checkedId, Toast.LENGTH_SHORT).show();
+                        try {
+
+                            jsonObjectQASendData = new JSONObject();
+                            jsonObjectQASendData.put("question_id",questionModels.get(position).str_que_id);
+                            jsonObjectQASendData.put("question_answer",checkedId);
+                            jsonObjectQASendData.put("question_type",questionModels.get(position).str_que_type);
+                            jsonObjectQASendData.put("question_feedback_id",questionModels.get(position).str_que_fk_id);
+                            stringJSONObjectHashMap.put("\""+questionModels.get(position).str_que_id+"\"",jsonObjectQASendData);
+
+                            Intent intent = new Intent("custom_message");
+                            intent.putExtra("question_answer", String.valueOf(stringJSONObjectHashMap));
+                            LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                });
+
+
             }
             else if (viewHolder instanceof RatingTypeViewHolder)
             {
-                ((RatingTypeViewHolder) viewHolder).textView_ratingBarQuestions.setText("Q : "+questionModels.get(position).str_gue_title);
-                final int count = questionModels.get(position).optionsModels.size();
-                ((RatingTypeViewHolder) viewHolder).ratingBar_Answer.setNumStars(count);
+                ((RatingTypeViewHolder) viewHolder).textView_ratingBarQuestions.setText(questionModels.get(position).str_gue_title);
+                double count = questionModels.get(position).optionsModels.size();
+                double value  = 5.0/count;
+//                String data = String.format("%.2f",value);
+                ((RatingTypeViewHolder) viewHolder).ratingBar_Answer.setStepSize((float) value);
+                ((RatingTypeViewHolder) viewHolder).ratingBar_Answer.setNumStars((int) count);
                 ((RatingTypeViewHolder) viewHolder).ratingBar_Answer.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                     @Override
                     public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser)
                     {
-                        if (rating<count)
-                        {
-                            Toast.makeText(mContext, "ID is :- "+Integer.parseInt(questionModels.get(position).optionsModels.get(Math.round(rating)).str_opt_id +" And Values :- "+questionModels.get(position).optionsModels.get(Math.round(rating)).str_opt_name), Toast.LENGTH_SHORT).show();
-                        }
+                        System.out.println("Rating Bar Value :- "+ questionModels.get(position).optionsModels.get((int) rating-1).str_opt_id);
 
+                        try {
+                            jsonObjectQASendData = new JSONObject();
+                            jsonObjectQASendData.put("question_id",questionModels.get(position).str_que_id);
+                            jsonObjectQASendData.put("question_answer",questionModels.get(position).optionsModels.get((int) rating-1).str_opt_id);
+                            jsonObjectQASendData.put("question_type",questionModels.get(position).str_que_type);
+                            jsonObjectQASendData.put("question_feedback_id",questionModels.get(position).str_que_fk_id);
+
+                            stringJSONObjectHashMap.put("\""+questionModels.get(position).str_que_id+"\"",jsonObjectQASendData);
+
+                            Intent intent = new Intent("custom_message");
+                            intent.putExtra("question_answer", String.valueOf(stringJSONObjectHashMap));
+                            LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+                            Toast.makeText(mContext, "Selected Rating Option ID :- "+ questionModels.get(position).optionsModels.get((int) rating-1).str_opt_id, Toast.LENGTH_SHORT).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
             }
             else if (viewHolder instanceof LongTextTypeViewHolder)
             {
-                ((LongTextTypeViewHolder) viewHolder).textView_long_textViewQuestions.setText("Q : "+questionModels.get(position).str_gue_title);
-                String answer = ((LongTextTypeViewHolder) viewHolder).editText_long_textViewAnswer.getText().toString();
+                jsonObjectQASendData = new JSONObject();
+                ((LongTextTypeViewHolder) viewHolder).textView_long_textViewQuestions.setText(questionModels.get(position).str_gue_title);
+                final String answerLongText = ((LongTextTypeViewHolder) viewHolder).editText_long_textViewAnswer.getText().toString();
+
+
             }
             else if (viewHolder instanceof ImageTypeViewHolder)
             {
-                ((ImageTypeViewHolder) viewHolder).textView_imageQuestions.setText("Q : "+questionModels.get(position).str_gue_title);
+                ((ImageTypeViewHolder) viewHolder).textView_imageQuestions.setText(questionModels.get(position).str_gue_title);
                 ((ImageTypeViewHolder) viewHolder).imageView_ImageAnswer.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -258,6 +369,19 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter<RecyclerView.View
                     }
                 });
             }
+            else if (viewHolder instanceof TextTypeViewHolder)
+            {
+                jsonObjectQASendData = new JSONObject();
+                ((TextTypeViewHolder) viewHolder).textView_textViewQuestions.setText(questionModels.get(position).str_gue_title);
+                final String answerText = ((TextTypeViewHolder) viewHolder).editText_textViewAnswer.getText().toString();
+
+            }
+            else if (viewHolder instanceof DropdownTypeViewHolder)
+            {
+                ((DropdownTypeViewHolder) viewHolder).textView_dropdownQuestions.setText(questionModels.get(position).str_gue_title);
+
+            }
+
 
         }
 

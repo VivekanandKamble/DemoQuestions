@@ -4,6 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+
+    <TextView
+        android:id="@+id/textView_imageQuestionsTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Q : "
+        android:textSize="20sp"
+        android:textColor="#000"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"/>
+
     <TextView
         android:id="@+id/textView_imageQuestions"
         android:layout_width="match_parent"
@@ -11,12 +22,20 @@
         android:text="Questions"
         android:textSize="20sp"
         android:textColor="#000"
-        android:layout_margin="20dp"/>
+        android:layout_toRightOf="@+id/textView_imageQuestionsTitle"
+        android:layout_toEndOf="@+id/textView_imageQuestionsTitle"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginEnd="20dp"/>
+
 
     <ImageView
         android:id="@+id/imageView_ImageAnswer"
         android:layout_width="150dp"
         android:layout_height="150dp"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:scaleType="fitXY"
         android:src="@drawable/ic_launcher_background"
@@ -27,17 +46,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="*To take photo click on above image"
-        android:layout_below="@+id/imageView_CustomerPhoto"
+        android:layout_below="@+id/imageView_ImageAnswer"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="10dp"/>
-
-    <!--<RadioGroup-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_below="@+id/textView_radioQuestions"-->
-    <!--android:layout_marginLeft="30dp"-->
-    <!--android:layout_marginStart="30dp"-->
-    <!--android:layout_marginBottom="20dp"/>-->
 
 
 </RelativeLayout>

@@ -1,5 +1,8 @@
 package com.app.demoquestions;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -34,6 +37,8 @@ public class MainActivity extends AppCompatActivity
     String [] str_opt_id,str_opt_name;
     String [] str_category_id,str_category_name;
 
+    String str_receive;
+
     ViewPagerAdapter viewPagerAdapter;
 
     @Override
@@ -65,6 +70,16 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+    public BroadcastReceiver mMessageReceiver = new BroadcastReceiver()
+    {
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+            str_receive = intent.getStringExtra("question_answer");
+            System.out.println("Receiver Message :- "+ str_receive);
+
+        }
+    };
     private void getCategory(int a )
     {
         CategoryModel categoryModel = CategoryList.get(a);
@@ -97,6 +112,8 @@ public class MainActivity extends AppCompatActivity
                         str_category_id = new String[jsonArrayCategoryList.length()];
                         str_category_name = new String[jsonArrayCategoryList.length()];
 
+                        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+
                         for (int i=0;i<jsonArrayCategoryList.length();i++)
                         {
                             JSONObject jsonObjectCategory = jsonArrayCategoryList.getJSONObject(i);
@@ -106,7 +123,7 @@ public class MainActivity extends AppCompatActivity
                             System.out.println("Question Category ID : " + str_category_id[i]);
                             System.out.println("Question Category Name : " + str_category_name[i]);
 
-                            tabLayout_FeedbackCategory.addTab(tabLayout_FeedbackCategory.newTab().setText(jsonObjectCategory.getString("qc_name")));
+                            viewPagerAdapter.addFragment(DynamicFragment.newInstance(),jsonObjectCategory.getString("qc_name"));
 
                             JSONArray jsonArrayQuestion = new JSONArray(jsonObjectCategory.getString("question_list"));
                             System.out.println("Question List :- "+ jsonArrayQuestion);
@@ -158,8 +175,9 @@ public class MainActivity extends AppCompatActivity
                             CategoryList.add(categoryModel);
                         }
 
-                        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(),tabLayout_FeedbackCategory.getTabCount());
+
                         viewPager_FeedbackQuestions.setAdapter(viewPagerAdapter);
+                        tabLayout_FeedbackCategory.setupWithViewPager(viewPager_FeedbackQuestions);
                         getCategory(0);
 
 

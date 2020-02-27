@@ -1,14 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView_QuestionFragment"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp">
 
-    </android.support.v7.widget.RecyclerView>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView_QuestionFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-</RelativeLayout>
+        </android.support.v7.widget.RecyclerView>
+
+        <RelativeLayout
+            android:layout_below="@+id/recyclerView_QuestionFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/button_feedback_next"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:text="Next"
+                android:textColor="#000"
+                android:textAllCaps="false"
+                android:layout_margin="15dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"/>
+
+            <Button
+                android:id="@+id/button_feedback_back"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:text="Previous"
+                android:textColor="#000"
+                android:layout_margin="15dp"
+                android:textAllCaps="false"/>
+        </RelativeLayout>
+
+    </RelativeLayout>
+</ScrollView>
