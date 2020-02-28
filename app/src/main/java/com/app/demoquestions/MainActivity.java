@@ -3,8 +3,10 @@ package com.app.demoquestions;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -48,8 +50,10 @@ public class MainActivity extends AppCompatActivity
         tabLayout_FeedbackCategory = findViewById(R.id.tabLayout_FeedbackCategory);
         viewPager_FeedbackQuestions = findViewById(R.id.viewPager_FeedbackQuestions);
 
-
         jsonFeedbackAllQuestions("18","1");
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,new IntentFilter("custom_message"));
+
 
         viewPager_FeedbackQuestions.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
